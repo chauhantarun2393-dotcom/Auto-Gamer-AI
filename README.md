@@ -1,58 +1,29 @@
 # Auto-Gamer-AI
 
-A lightweight starter project for an AI-powered game automation bot.
+A small Python starter bot that looks for a supplied image on screen and presses Space when it finds a match.
 
-This repository was empty, so I initialized a minimal, runnable structure that can be extended into a real automation bot for a game window.
-
-## Features
-- Python-based automation scaffold
-- Screen capture support
-- Template-based detection placeholder
-- Keyboard/mouse actions scaffold
-- Easy to extend for a specific game
-
-## Project structure
-
-```text
-Auto-Gamer-AI/
-├── app.py
-├── requirements.txt
-├── .gitignore
-├── README.md
-└── src/
-    └── auto_gamer_ai/
-        ├── __init__.py
-        └── bot.py
-```
-
-## Quick start
-
-1. Create a virtual environment:
+## Setup
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
-2. Install dependencies:
-
-```bash
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-3. Run the app:
+## Run
+
+Save a small screenshot of the on-screen target as an image, then run:
 
 ```bash
-python app.py --window-title "Game"
+python app.py --template path/to/target.png
 ```
 
-## Notes
-- This is a starter scaffold, not a finished game bot.
-- To make it work for a specific game, you will need to define:
-  - the target window title
-  - the object/template images to detect
-  - the action sequence to automate
-  - any game-specific timing and clicks
+Optional settings:
 
-## License
-This project is provided as a starting template for experimentation and learning.
+```bash
+python app.py --template path/to/target.png --interval 0.5 --threshold 0.85
+```
+
+The confidence threshold must be between 0 and 1, and the interval must be greater than zero. The bot captures the full desktop, not just a selected game window, and sends Space to the currently focused application when the template is detected. Keep the intended game visible and focused. Press Ctrl+C to stop; PyAutoGUI's corner fail-safe is enabled by default.
+
+This is a basic template-matching scaffold, not a game-specific AI. It will not act without a valid target image. Template matching can require an exact enough scale and appearance; tune the threshold and template for your game.

@@ -1,61 +1,76 @@
-"""Automation bot scaffolding for Auto-Gamer-AI."""
+"""Template-matching automation scaffold for Auto-Gamer-AI."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 import time
-from typing import Optional
 
 import pyautogui
-from PIL import ImageGrab
+from PIL import Image, ImageGrab, UnidentifiedImageError
 
 
 @dataclass
 class BotConfig:
     interval: float = 0.5
     threshold: float = 0.85
-    target_window_title: str = "Game"
+    template_path: Path | str = ""
+
+    def __post_init__(self) -> None:
+        if self.interval <= 0:
+            raise ValueError("interval must be greater than zero")
+        if not 0 <= self.threshold <= 1:
+            raise ValueError("threshold must be between 0 and 1")
+        if not self.template_path:
+            raise ValueError("template_path is required; refusing to run without a target")
 
 
 class GameBot:
-    """Minimal game automation scaffold.
+    """Find a target image on screen and press Space when it is visible.
 
-    This class demonstrates the core loop used by a game automation bot:
-    1. capture the screen,
-    2. detect a target pattern,
-    3. perform a mouse/keyboard action,
-    4. repeat until interrupted.
+    This starter bot captures the full desktop. It does not isolate a particular
+    game window; ensure the intended game is visible before starting it.
     """
 
-    def __init__(self, config: Optional[BotConfig] = None) -> None:
-        self.config = config or BotConfig()
+    def __init__(self, config: BotConfig) -> None:
+        self.config = config
+        template_path = Path(config.template_path).expanduser()
+        if not template_path.is_file():
+            raise FileNotFoundError(f"Target template image not found: {template_path}")
+        try:
+            with Image.open(template_path) as template:
+                self._template = template.convert("RGB").copy()
+        except (UnidentifiedImageError, OSError) as exc:
+            raise ValueError(f"Could not read target template image: {template_path}") from exc
 
-    def capture_screen(self):
-        """Capture the current screen as RGB image."""
-        return ImageGrab.grab()
+    def capture_screen(self) -> Image.Image:
+        """Capture the current desktop as an RGB image."""
+        return ImageGrab.grab().convert("RGB")
 
-    def detect_target(self) -> bool:
-        """Placeholder target detection logic.
-
-        Replace this with image matching, OCR, or game-specific logic.
-        """
-        # Example placeholder: simply assume the target is present.
-        # In a real implementation, you'd compare a screenshot against a known
-        # template image or inspect pixel regions.
-        return True
+    def detect_target(self, screenshot: Image.Image) -> bool:
+        """Return whether the configured template is visible in the screenshot."""
+        try:
+            location = pyautogui.locate(
+                self._template,
+                screenshot,
+                confidence=self.config.threshold,
+            )
+        except pyautogui.ImageNotFoundException:
+            return False
+        return location is not None
 
     def perform_action(self) -> None:
-        """Placeholder action logic."""
+        """Press Space once after a target has been detected."""
         pyautogui.press("space")
-        time.sleep(0.2)
 
     def run(self) -> None:
-        """Main bot loop."""
-        print(f"Starting Auto-Gamer-AI bot for window: {self.config.target_window_title}")
+        """Capture, detect, and act until interrupted."""
+        print("Starting Auto-Gamer-AI. Target template:", self.config.template_path)
+        print("Capturing the full desktop; press Ctrl+C to stop.")
         try:
             while True:
                 screenshot = self.capture_screen()
-                if self.detect_target():
+                if self.detect_target(screenshot):
                     self.perform_action()
                 time.sleep(self.config.interval)
         except KeyboardInterrupt:
