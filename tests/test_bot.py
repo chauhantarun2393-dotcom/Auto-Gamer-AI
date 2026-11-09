@@ -29,17 +29,21 @@ class BotTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "template_path"):
             BotConfig()
 
+    def test_action_rejects_invalid_choice(self) -> None:
+        with self.assertRaisesRegex(ValueError, "action"):
+            BotConfig(template_path=self.template_path, action="invalid")
+
     def test_detect_target_returns_true_for_match(self) -> None:
         bot = GameBot(BotConfig(template_path=self.template_path))
         screenshot = Image.new("RGB", (20, 20), color="white")
         with patch("src.auto_gamer_ai.bot.pyautogui.locate", return_value=(1, 2, 8, 8)):
-            self.assertTrue(bot.detect_target(screenshot))
+            self.assertIsNotNone(bot.detect_target(screenshot))
 
     def test_detect_target_returns_false_when_no_match(self) -> None:
         bot = GameBot(BotConfig(template_path=self.template_path))
         screenshot = Image.new("RGB", (20, 20), color="white")
         with patch("src.auto_gamer_ai.bot.pyautogui.locate", return_value=None):
-            self.assertFalse(bot.detect_target(screenshot))
+            self.assertIsNone(bot.detect_target(screenshot))
 
     def test_missing_template_fails_before_running(self) -> None:
         missing = Path(self.temp_dir.name) / "missing.png"
