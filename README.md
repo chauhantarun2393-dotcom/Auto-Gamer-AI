@@ -1,10 +1,10 @@
 # Auto-Gamer-AI
 
-A Python starter for screen-template-based automation. The bot code is generic and is **not designed or appropriate for automating competitive online gameplay**.
+A Python starter for screen-template-based automation. It is not designed or appropriate for automating competitive online gameplay.
 
-## Free Fire controls
+## Free Fire on mobile
 
-For manual emulator key mapping, sensitivity tuning, and accessibility tips, see [the Free Fire emulator controls guide](docs/free-fire-emulator-controls.md). Use the emulator's built-in control editor and test changes in practice mode; the guide does not automate game input.
+For touchscreen HUD placement, sensitivity tuning, and mobile play tips, see the [Free Fire mobile controls guide](docs/free-fire-mobile-controls.md). The guide uses the game's own settings and does not automate gameplay.
 
 ## Bot setup (offline/single-player projects only)
 
