@@ -1,36 +1,23 @@
 # Auto-Gamer-AI
 
-A Python starter for game automation. This project detects a target image on screen and triggers a control action when it appears.
+A Python starter for screen-template-based automation. The bot code is generic and is **not designed or appropriate for automating competitive online gameplay**.
 
-## What it does
+## Free Fire controls
 
-- looks for a template image on the active screen
-- optionally focuses a game window by title
-- presses `Space`, `Enter`, or clicks a detected target
-- repeats on a configurable interval
+For manual emulator key mapping, sensitivity tuning, and accessibility tips, see [the Free Fire emulator controls guide](docs/free-fire-emulator-controls.md). Use the emulator's built-in control editor and test changes in practice mode; the guide does not automate game input.
 
-## Setup
+## Bot setup (offline/single-player projects only)
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 pip install -r requirements.txt
 ```
 
-## Run
+Run the template-matching starter only in an offline or single-player project where automation is permitted:
 
 ```bash
-python app.py --template path/to/target.png --window-title "My Game" --action space --interval 0.5 --threshold 0.85
+python app.py --template path/to/target.png --action space
 ```
 
-You can also click the detected match or a fixed location:
-
-```bash
-python app.py --template path/to/target.png --action click --click-x 500 --click-y 300
-```
-
-## Notes
-
-- The bot works best when the target UI is visible and the game is in focus.
-- Template matching is sensitive to scale, DPI, and visual changes; tune `--threshold` as needed.
-- This is still a template-matching bot, not a fully autonomous AI. To make it game-specific, add the right target images and the actions that correspond to your game's UI.
+The bot captures the desktop and sends input to the currently focused application when a template is detected. Press Ctrl+C to stop. Template matching is sensitive to scale, DPI, and visual changes. Do not use this tool to automate competitive online matches.
